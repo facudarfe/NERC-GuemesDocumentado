@@ -21,6 +21,7 @@ import glob
 import logging
 import os
 import random
+import csv
 
 import numpy as np
 import torch
@@ -310,8 +311,19 @@ def evaluate(args, model, tokenizer, labels, pad_token_label_id, mode, prefix=""
         "recall": recall_score(out_label_list, preds_list),
         "f1": f1_score(out_label_list, preds_list),
     }
+    
+    if mode == 'test':
+        # Save results into a csv file
+        file = open('results.csv', 'a')
+        csv_writer = csv.DictWriter(file, results.keys())
+        if args.iteration == 0:
+            csv_writer.writeheader()
+            
+        csv_writer.writerow(results)
+        file.close()
 
     logger.info("***** Eval results %s *****", prefix)
+    
     for key in sorted(results.keys()):
         logger.info("  %s = %s", key, str(results[key]))
 
@@ -490,6 +502,7 @@ def main():
         "--overwrite_cache", action="store_true", help="Overwrite the cached training and evaluation sets"
     )
     parser.add_argument("--seed", type=int, default=42, help="random seed for initialization")
+    parser.add_argument("--iteration", type=int, default=42, help="number of iteration")
 
     parser.add_argument(
         "--fp16",
@@ -650,6 +663,7 @@ def main():
         model = AutoModelForTokenClassification.from_pretrained(args.output_dir)
         model.to(args.device)
         result, predictions = evaluate(args, model, tokenizer, labels, pad_token_label_id, mode="test")
+        
         # Save results
         output_test_results_file = os.path.join(args.output_dir, "test_results.txt")
         with open(output_test_results_file, "w") as writer:
