@@ -21,7 +21,7 @@ This repository contains the scripts and documents used in the NER tasks on the 
 
 ~~**Spacy:** Deprecated Spacy model with incorrect tokenization and classification.~~
 
-**SpanBERTa - NER Spanish BERT.ipynb:** SpanBERTa script.
+**SpanBERTa - NER Spanish BERT.ipynb:** Script for Transformer based models.
 
 **StanfordNERTagger.ipynb:** Stanford script.
 
